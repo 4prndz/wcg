@@ -19,3 +19,4 @@ simplifile = "~> 1.7"
 
 [dev-dependencies]
 gleeunit = "~> 1.0"
+gleescript = "~> 1.0"
