@@ -9,35 +9,32 @@ import gleam/result
 pub fn main() {
   case argv.load().arguments {
     ["-c", file] -> {
-      io.debug(file)
-      case read_file_bytes(file) {
-        Ok(x) -> output.build(x, "bytes", file)
-        Error(_) -> io.println("File not found")
-      }
+      handle_request(read_file_bytes(file), "bytes", file)
     }
     ["-l", file] -> {
-      case read_file_lines(file) {
-        Ok(x) -> output.build(x, "lines", file)
-        Error(_) -> io.println("File not found")
-      }
+      handle_request(read_file_lines(file), "lines", file)
     }
     ["-w", file] -> {
-      case read_file_words(file) {
-        Ok(x) -> output.build(x, "words", file)
-        Error(_) -> io.println("File not found")
-      }
+      handle_request(read_file_words(file), "words", file)
     }
     ["-m", file] -> {
-      case read_file_chars(file) {
-        Ok(x) -> output.build(x, "words", file)
-        Error(_) -> io.println("File not found")
-      }
+      handle_request(read_file_chars(file), "chars", file)
     }
     [file] -> {
-      io.debug(file)
       read_file(file)
     }
     _ -> io.println("wcg: not found args.")
+  }
+}
+
+pub fn handle_request(
+  result: Result(Int, String),
+  unit: String,
+  file: String,
+) -> Nil {
+  case result {
+    Ok(x) -> output.build(x, unit, file)
+    Error(_) -> io.println("wcg: " <> file <> ": File or Directory not found!")
   }
 }
 
