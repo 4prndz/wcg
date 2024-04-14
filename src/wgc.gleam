@@ -1,9 +1,7 @@
 import simplifile
 import gleam/io
 import argv
-import gleam/bit_array
 import utility/output
-import gleam/result
 import gleam/string
 import gleam/list
 
@@ -11,6 +9,7 @@ pub fn main() {
   case argv.load().arguments {
     ["-c", file] -> read_file_byte(file)
     ["-l", file] -> read_file_lines(file)
+    ["-w", file] -> read_file_words(file)
     _ -> io.println("wcg: not found args.")
   }
 }
@@ -36,6 +35,23 @@ pub fn read_file_lines(file: String) -> Nil {
       }
       - 1
       |> output.build("lines", file)
+    }
+    Error(_) -> {
+      io.println("wcg: " <> file <> ": No such file or directory")
+    }
+  }
+}
+
+pub fn read_file_words(file: String) -> Nil {
+  case simplifile.read(file) {
+    Ok(content) -> {
+      {
+        string.replace(content, "\n", " ")
+        |> string.split(" ")
+        |> list.filter(fn(x) { x != "" && x != " " })
+        |> list.length()
+      }
+      |> output.build("words", file)
     }
     Error(_) -> {
       io.println("wcg: " <> file <> ": No such file or directory")
