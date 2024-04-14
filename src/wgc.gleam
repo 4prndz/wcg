@@ -28,7 +28,7 @@ pub fn main() {
 }
 
 pub fn handle_request(
-  result: Result(Int, String),
+  result: Result(Int, simplifile.FileError),
   unit: String,
   file: String,
 ) -> Nil {
@@ -38,19 +38,19 @@ pub fn handle_request(
   }
 }
 
-pub fn read_file_bytes(file: String) -> Result(Int, String) {
+pub fn read_file_bytes(file: String) -> Result(Int, simplifile.FileError) {
   case simplifile.read(file) {
     Ok(content) -> {
       string.byte_size(content)
       |> Ok()
     }
-    Error(_) -> {
-      Error("File not Found")
+    Error(err) -> {
+      Error(err)
     }
   }
 }
 
-pub fn read_file_lines(file: String) -> Result(Int, String) {
+pub fn read_file_lines(file: String) -> Result(Int, simplifile.FileError) {
   case simplifile.read(file) {
     Ok(content) -> {
       {
@@ -60,13 +60,13 @@ pub fn read_file_lines(file: String) -> Result(Int, String) {
       - 1
       |> Ok()
     }
-    Error(_) -> {
-      Error("")
+    Error(err) -> {
+      Error(err)
     }
   }
 }
 
-pub fn read_file_words(file: String) -> Result(Int, String) {
+pub fn read_file_words(file: String) -> Result(Int, simplifile.FileError) {
   case simplifile.read(file) {
     Ok(content) -> {
       {
@@ -77,13 +77,13 @@ pub fn read_file_words(file: String) -> Result(Int, String) {
       }
       |> Ok()
     }
-    Error(_) -> {
-      Error("")
+    Error(err) -> {
+      Error(err)
     }
   }
 }
 
-pub fn read_file_chars(file: String) -> Result(Int, String) {
+pub fn read_file_chars(file: String) -> Result(Int, simplifile.FileError) {
   case simplifile.read(file) {
     Ok(content) -> {
       {
@@ -93,8 +93,8 @@ pub fn read_file_chars(file: String) -> Result(Int, String) {
       }
       |> Ok()
     }
-    Error(_) -> {
-      Error("")
+    Error(err) -> {
+      Error(err)
     }
   }
 }
@@ -108,6 +108,6 @@ pub fn read_file(file: String) -> Nil {
         result.unwrap(read_file_words(file), 1),
         file,
       )
-    Error(_) -> io.println("File not Found")
+    Error(_) -> io.println("wcg: " <> file <> ": File or Directory not Found!")
   }
 }
