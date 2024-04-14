@@ -3,22 +3,42 @@ import gleam/io
 import argv
 import gleam/bit_array
 import utility/output
+import gleam/result
+import gleam/string
+import gleam/list
 
 pub fn main() {
   case argv.load().arguments {
     ["-c", file] -> read_file_byte(file)
+    ["-l", file] -> read_file_lines(file)
     _ -> io.println("wcg: not found args.")
   }
 }
 
 pub fn read_file_byte(file: String) -> Nil {
-  case simplifile.read_bits(file) {
-    Ok(file_bits) -> {
-      bit_array.byte_size(file_bits)
+  case simplifile.read(file) {
+    Ok(content) -> {
+      string.byte_size(content)
       |> output.build("bytes", file)
     }
     Error(_) -> {
-      io.println("file not found")
+      io.println("wcg: " <> file <> ": No such file or directory")
+    }
+  }
+}
+
+pub fn read_file_lines(file: String) -> Nil {
+  case simplifile.read(file) {
+    Ok(content) -> {
+      {
+        string.split(content, "\n")
+        |> list.length()
+      }
+      - 1
+      |> output.build("lines", file)
+    }
+    Error(_) -> {
+      io.println("wcg: " <> file <> ": No such file or directory")
     }
   }
 }
